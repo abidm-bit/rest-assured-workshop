@@ -28,14 +28,23 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212
 	 * and check that the response has HTTP status code 200
 	 ******************************************************/
+// path parameter for the customer id
+    // log the response body
+        // assert the status code
 
 	@Test
 	public void requestDataForCustomer12212_checkResponseCode_expect200() {
 
-		given().
-			spec(requestSpec).
-		when().
-		then();
+		given()
+                .spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get("/customer/{customerId}")
+                .then()
+                .log().all()
+                .and()
+                .assertThat()
+                .statusCode(200);
 	}
 
 	/*******************************************************
