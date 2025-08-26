@@ -34,7 +34,6 @@ public class RestAssuredExercises1Test {
 
 	@Test
 	public void requestDataForCustomer12212_checkResponseCode_expect200() {
-
 		given()
                 .spec(requestSpec)
                 .pathParam("customerId",12212)
