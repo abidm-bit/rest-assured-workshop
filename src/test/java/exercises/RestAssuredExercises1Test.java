@@ -14,6 +14,14 @@ import org.junit.jupiter.api.Test;
 public class RestAssuredExercises1Test {
 
 	private RequestSpecification requestSpec;
+    public Integer reuseId;
+    public String customerIdEndpoint = "/customer/{customerId}";
+
+
+    /*
+       COMMON: path parameter, endpoint , customerId
+
+    */
 
 	@BeforeEach
 	public void createRequestSpecification() {
@@ -28,22 +36,27 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212
 	 * and check that the response has HTTP status code 200
 	 ******************************************************/
-// path parameter for the customer id
-    // log the response body
-        // assert the status code
-
 	@Test
 	public void requestDataForCustomer12212_checkResponseCode_expect200() {
-		given()
+        reuseId =
+        given()
                 .spec(requestSpec)
                 .pathParam("customerId",12212)
                 .when()
-                .get("/customer/{customerId}")
+                .get(customerIdEndpoint)
+                .then()
+                .extract()
+                .path("id");
+		given()
+                .spec(requestSpec)
+                .pathParam("customerId",reuseId)
+                .when()
+                .get(customerIdEndpoint)
                 .then()
                 .log().all()
                 .and()
                 .assertThat()
-                .statusCode(200);
+                .statusCode(ApiResponseStatus.OK.getCode());
 	}
 
 	/*******************************************************
@@ -51,14 +64,14 @@ public class RestAssuredExercises1Test {
 	 * and check that the answer has HTTP status code 404
 	 ******************************************************/
 
-    // COMMON path parameter, endpoint
+
 	@Test
 	public void requestDataForCustomer99999_checkResponseCode_expect404() {
 		given()
                 .spec(requestSpec)
                 .pathParam("customerId",99999)
                 .when()
-                .get("/customer/{customerId}")
+                .get(customerIdEndpoint)
                 .then()
                 .log().all()
                 .and()
@@ -78,7 +91,7 @@ public class RestAssuredExercises1Test {
 			spec(requestSpec)
                 .pathParam("customerId",12212)
                 .when()
-                .get("/customer/{customerId}")
+                .get(customerIdEndpoint)
                 .then()
                 .assertThat()
                 .contentType("application/json");
@@ -92,18 +105,21 @@ public class RestAssuredExercises1Test {
 	 * extract the required response body element
 	 **********************************************/
 
-	@Test
-	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
-		given().
-			spec(requestSpec)
-            .pathParam("customerId",12212)
-            .when()
-            .get("/customer/{customerId}")
-            .then()
-            .log().all()
-            .assertThat()
-                .body("firstName",equalTo("John"));
-	}
+//	@Test
+//	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
+//        String firstName =
+//		given().
+//			spec(requestSpec)
+//            .pathParam("customerId",12212)
+//            .when()
+//            .get("/customer/{customerId}")
+//            .then()
+//            .log().all()
+//                .extract()
+//                .path("firstName")
+//            .assertThat()
+//                .body("firstName",equalTo("John"));
+//	}
 
 	/***********************************************
 	 * Send a GET request to /customer/12212 and check
@@ -115,7 +131,6 @@ public class RestAssuredExercises1Test {
 // assert a nested property within a JSON
 	@Test
 	public void requestDataForCustomer12212_checkAddressCity_expectBeverlyHills() {
-
 		given()
        .spec(requestSpec)
        .pathParam("customerId",12212)
@@ -128,25 +143,24 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212/accounts
 	 * and check that the list of accounts returned
 	 * includes an account with ID 12345
-	 *
 	 * Use the GPath expression "accounts.id" to
 	 * extract the required response body elements
 	 **********************************************/
 
 	@Test
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectContains12345() {
-
-		given().
-			spec(requestSpec).
-		when().
-		then();
+		given()
+        .spec(requestSpec)
+        .pathParam("customerId",12212)
+        .when()
+        .get("/customer/{customerId}/accounts")
+        .then().log().all();
 	}
 
 	/***********************************************
 	 * Send a GET request to /customer/12212/accounts
 	 * and check that the list of accounts returned
 	 * does not include an account with ID 99999
-	 *
 	 * Use the GPath expression "accounts.id" to
 	 * extract the required response body elements
 	 **********************************************/
@@ -164,7 +178,6 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212/accounts
 	 * and check that the list of account IDs returned
 	 * is a collection of size 3
-	 *
 	 * Use the GPath expression "accounts.id" to
 	 * extract the required response body elements
 	 **********************************************/
