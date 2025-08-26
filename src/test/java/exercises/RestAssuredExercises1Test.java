@@ -51,13 +51,19 @@ public class RestAssuredExercises1Test {
 	 * and check that the answer has HTTP status code 404
 	 ******************************************************/
 
+    // COMMON path parameter, endpoint
 	@Test
 	public void requestDataForCustomer99999_checkResponseCode_expect404() {
-
-		given().
-			spec(requestSpec).
-		when().
-		then();
+		given()
+                .spec(requestSpec)
+                .pathParam("customerId",99999)
+                .when()
+                .get("/customer/{customerId}")
+                .then()
+                .log().all()
+                .and()
+                .assertThat()
+                .statusCode(404);
 	}
 
 	/*******************************************************
