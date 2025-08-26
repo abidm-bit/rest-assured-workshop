@@ -88,18 +88,20 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212 and check
 	 * that the first name of the person associated with
 	 * this customer ID is 'John'.
-	 *
 	 * Use the GPath expression "firstName" to
 	 * extract the required response body element
 	 **********************************************/
 
 	@Test
 	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
-
 		given().
-			spec(requestSpec).
-		when().
-		then();
+			spec(requestSpec)
+            .pathParam("customerId",12212)
+            .when()
+            .get("/customer/{customerId}")
+            .then()
+            .assertThat()
+                .body("firstName",equalTo("John"));
 	}
 
 	/***********************************************

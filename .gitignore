@@ -33,7 +33,7 @@ test-output/
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 .idea/
-
+/logs/
 # CMake
 cmake-build-debug/
 
