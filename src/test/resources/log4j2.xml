@@ -28,13 +28,13 @@
 
     <!-- Loggers -->
     <Loggers>
-        <!-- Rest Assured main logs -->
+        <!-- Rest Assured logs (only print when .log().all() is used) -->
         <Logger name="io.restassured" level="INFO" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileLogger"/>
         </Logger>
 
-        <!-- Apache HTTP Client (used internally by Rest Assured) -->
+        <!-- Suppress noisy HTTP client internals -->
         <Logger name="org.apache.http" level="WARN" additivity="false">
             <AppenderRef ref="FileLogger"/>
         </Logger>
@@ -42,15 +42,19 @@
             <AppenderRef ref="FileLogger"/>
         </Logger>
 
-        <!-- JSON / Jackson logs (used by Rest Assured when parsing) -->
+        <!-- JSON parser (only warn/error) -->
         <Logger name="com.fasterxml.jackson" level="WARN" additivity="false">
             <AppenderRef ref="FileLogger"/>
         </Logger>
 
-        <!-- Your project logs -->
-        <Root level="DEBUG">
+        <!-- Root project logs -->
+        <Root level="INFO">   <!-- only INFO+ in console -->
             <AppenderRef ref="Console"/>
+        </Root>
+
+        <Root level="DEBUG">  <!-- DEBUG+ in rolling file for full history -->
             <AppenderRef ref="FileLogger"/>
         </Root>
+
     </Loggers>
 </Configuration>
