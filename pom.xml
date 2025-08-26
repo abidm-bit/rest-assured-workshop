@@ -72,6 +72,15 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.22.0</version>
         </dependency>
+        <!-- RestAssured uses JUnit by default, im adding TestNG
+        TestNG has more annotations, ITestListener & Data Provider
+        I also have more experience with TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.11.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
