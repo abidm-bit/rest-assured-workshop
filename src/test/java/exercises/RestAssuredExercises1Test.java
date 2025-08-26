@@ -74,11 +74,14 @@ public class RestAssuredExercises1Test {
 
 	@Test
 	public void requestDataForCustomer12212_checkContentType_expectApplicationJson() {
-
 		given().
-			spec(requestSpec).
-		when().
-		then();
+			spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get("/customer/{customerId}")
+                .then()
+                .assertThat()
+                .contentType("application/json");
 	}
 
 	/***********************************************
