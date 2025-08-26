@@ -105,21 +105,26 @@ public class RestAssuredExercises1Test {
 	 * extract the required response body element
 	 **********************************************/
 
-//	@Test
-//	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
-//        String firstName =
-//		given().
-//			spec(requestSpec)
-//            .pathParam("customerId",12212)
-//            .when()
-//            .get("/customer/{customerId}")
-//            .then()
-//            .log().all()
-//                .extract()
-//                .path("firstName")
-//            .assertThat()
-//                .body("firstName",equalTo("John"));
-//	}
+	@Test
+	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
+        String firstName =
+		given().
+			spec(requestSpec)
+            .pathParam("customerId",12212)
+            .when()
+            .get(customerIdEndpoint)
+            .then()
+                .extract()
+                .path("firstName");
+        given().
+                spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+            .assertThat()
+                .body("firstName",equalTo(firstName));
+	}
 
 	/***********************************************
 	 * Send a GET request to /customer/12212 and check
