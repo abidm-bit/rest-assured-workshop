@@ -100,6 +100,7 @@ public class RestAssuredExercises1Test {
             .when()
             .get("/customer/{customerId}")
             .then()
+            .log().all()
             .assertThat()
                 .body("firstName",equalTo("John"));
 	}
@@ -108,18 +109,19 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212 and check
 	 * that the city where the person associated with
 	 * this customer ID is living is 'Beverly Hills'.
-	 *
 	 * Use the GPath expression "address.city" to
 	 * extract the required response body element
 	 **********************************************/
-
+// assert a nested property within a JSON
 	@Test
 	public void requestDataForCustomer12212_checkAddressCity_expectBeverlyHills() {
 
-		given().
-			spec(requestSpec).
-		when().
-		then();
+		given()
+       .spec(requestSpec)
+       .pathParam("customerId",12212)
+       .when()
+       .get("/customer/{customerId}")
+       .then().assertThat().body("address.city",equalTo("Beverly Hills"));
 	}
 
 	/***********************************************
