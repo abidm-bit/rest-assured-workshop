@@ -52,9 +52,5 @@
             <AppenderRef ref="Console"/>
         </Root>
 
-        <Root level="DEBUG">  <!-- DEBUG+ in rolling file for full history -->
-            <AppenderRef ref="FileLogger"/>
-        </Root>
-
     </Loggers>
 </Configuration>
