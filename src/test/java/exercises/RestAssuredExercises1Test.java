@@ -10,6 +10,8 @@ import io.restassured.specification.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 @WireMockTest(httpPort = 9876)
 public class RestAssuredExercises1Test {
 
@@ -17,10 +19,6 @@ public class RestAssuredExercises1Test {
     public String customerIdEndpoint = "/customer/{customerId}";
     public Integer reuseId;
 
-    /*
-       COMMON: path parameter, endpoint , customerId
-
-    */
 
 	@BeforeEach
 	public void createRequestSpecification() {
@@ -35,6 +33,7 @@ public class RestAssuredExercises1Test {
 	 * Send a GET request to /customer/12212
 	 * and check that the response has HTTP status code 200
 	 ******************************************************/
+    // extracting the id, to reuse it, but this sends 2 requests
 	@Test
 	public void requestDataForCustomer12212_checkResponseCode_expect200() {
         reuseId =
@@ -84,6 +83,7 @@ public class RestAssuredExercises1Test {
 	 * has value 'application/json'
 	 ******************************************************/
 
+    // realizing that I have to use the dataentities POJO class and the json test data from resources/mappings
 	@Test
 	public void requestDataForCustomer12212_checkContentType_expectApplicationJson() {
 		given().
@@ -141,15 +141,15 @@ public class RestAssuredExercises1Test {
 	 * Use the GPath expression "accounts.id" to
 	 * extract the required response body elements
 	 **********************************************/
-
+// asserting if an array contains an element
 	@Test
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectContains12345() {
 		given()
         .spec(requestSpec)
         .pathParam("customerId",12212)
         .when()
-        .get("/customer/{customerId}/accounts")
-        .then().log().all();
+        .get(customerIdEndpoint+"/accounts")
+        .then().assertThat().body("accounts.id",hasItem(12345));
 	}
 
 	/***********************************************
@@ -162,11 +162,11 @@ public class RestAssuredExercises1Test {
 
 	@Test
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectDoesNotContain99999() {
-
 		given().
-			spec(requestSpec).
-		when().
-		then();
+			spec(requestSpec).pathParam("customerId",12212)
+                .when()
+                .get(customerIdEndpoint+"/accounts")
+                .then().assertThat().body("accounts.id",not(hasItem(99999)));
 	}
 
 	/***********************************************
@@ -179,10 +179,10 @@ public class RestAssuredExercises1Test {
 
 	@Test
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectSize3() {
-
 		given().
 			spec(requestSpec).
-		when().
-		then();
+                pathParam("customerId",12212)
+		        .when().get(customerIdEndpoint+"/accounts")
+                .then().assertThat().body("accounts.id",hasSize(3));
 	}
 }
