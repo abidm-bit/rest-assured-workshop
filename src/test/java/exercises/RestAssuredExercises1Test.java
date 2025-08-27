@@ -14,9 +14,8 @@ import org.junit.jupiter.api.Test;
 public class RestAssuredExercises1Test {
 
 	private RequestSpecification requestSpec;
-    public Integer reuseId;
     public String customerIdEndpoint = "/customer/{customerId}";
-
+    public Integer reuseId;
 
     /*
        COMMON: path parameter, endpoint , customerId
@@ -76,7 +75,7 @@ public class RestAssuredExercises1Test {
                 .log().all()
                 .and()
                 .assertThat()
-                .statusCode(404);
+                .statusCode(ApiResponseStatus.NOT_FOUND.getCode());
 	}
 
 	/*******************************************************
@@ -107,15 +106,6 @@ public class RestAssuredExercises1Test {
 
 	@Test
 	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
-        String firstName =
-		given().
-			spec(requestSpec)
-            .pathParam("customerId",12212)
-            .when()
-            .get(customerIdEndpoint)
-            .then()
-                .extract()
-                .path("firstName");
         given().
                 spec(requestSpec)
                 .pathParam("customerId",12212)
@@ -123,7 +113,7 @@ public class RestAssuredExercises1Test {
                 .get(customerIdEndpoint)
                 .then()
             .assertThat()
-                .body("firstName",equalTo(firstName));
+                .body("firstName",equalTo("John"));
 	}
 
 	/***********************************************
@@ -140,7 +130,7 @@ public class RestAssuredExercises1Test {
        .spec(requestSpec)
        .pathParam("customerId",12212)
        .when()
-       .get("/customer/{customerId}")
+       .get(customerIdEndpoint)
        .then().assertThat().body("address.city",equalTo("Beverly Hills"));
 	}
 
