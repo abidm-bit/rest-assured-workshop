@@ -112,8 +112,8 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkNumberOfAccountIdsStartingWith5_shouldBe2() {
 
         given().
-            spec(requestSpec).
-        when().
-        then();
+            spec(requestSpec).header("Accept","application/xml").
+        when().get("/xml/customer/12212/accounts").
+                then().assertThat().body("accounts.account.id.grep(~/5.*/)",hasSize(2));
     }
 }
