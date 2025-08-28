@@ -37,6 +37,7 @@ public class RestAssuredExercises4Test {
      * expression to extract the required value from the response
      ******************************************************/
 
+    // Request Header, response should be in XML , assert a xml field
     @Test
     public void getAccountsForCustomer12212AsXml_checkIdOfFirstAccount_shouldBe12345() {
 
@@ -66,9 +67,11 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkBalanceOfThirdAccount_shouldBe4321() {
 
         given().
-            spec(requestSpec).
-        when().
-        then();
+            spec(requestSpec).header("Accept","application/xml").
+        when().get("/xml/customer/12212/accounts").
+        then()
+                .assertThat()
+                .contentType(ContentType.XML).body("accounts.account[2].balance",equalTo("43.21"));
     }
 
     /*******************************************************
