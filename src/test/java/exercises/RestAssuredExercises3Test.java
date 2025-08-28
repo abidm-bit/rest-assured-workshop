@@ -6,6 +6,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.restassured.RestAssured.authentication;
 import static io.restassured.RestAssured.given;
 
 @WireMockTest(httpPort = 9876)
@@ -38,15 +39,19 @@ public class RestAssuredExercises3Test {
 
     @Test
     public void getTokenUsingBasicAuth_extractFromResponse_thenReuseAsOAuthToken() {
-
+    String reuseToken =
         given().
             spec(requestSpec).
+                auth().preemptive().basic("john","demo").
         when().
-        then();
-
+        get("/token").
+        then().extract().path("token")
+            ;
         given().
             spec(requestSpec).
+                auth().oauth2(reuseToken).
         when().
-        then();
+                get("/secure/customer/12212").
+        then().assertThat().statusCode(ApiResponseStatus.OK.getCode());
     }
 }
