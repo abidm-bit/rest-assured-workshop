@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class RestAssuredExercises2Test {
 
     private RequestSpecification requestSpec;
+    public String customerIdEndpoint = "/customer/{customerId}";
 
     @BeforeEach
     public void createRequestSpecification() {
@@ -47,42 +48,22 @@ public class RestAssuredExercises2Test {
      * respectively, to extract the required response body elements
      ******************************************************/
 
-    @Test
-    public void requestDataForCustomer12212_checkNames_expectJohnSmith() {
-
+    @ParameterizedTest
+    @CsvSource({
+            "12212, John, Smith",
+            "12323, Susan, Holmes",
+            "14545, Anna, Grant"
+    })
+    public void requestData_checkNames(int customerId, String firstName, String lastName) {
         given().
-            spec(requestSpec).
+            spec(requestSpec).pathParam("customerId",customerId).
         when().
-            get("/customer/12212").
+            get(customerIdEndpoint).
         then().
             assertThat().
-            body("firstName", equalTo("John")).
-            body("lastName", equalTo("Smith"));
+            body("firstName", equalTo(firstName)).
+            body("lastName", equalTo(lastName));
     }
 
-    @Test
-    public void requestDataForCustomer12323_checkNames_expectSusanHolmes() {
-
-        given().
-            spec(requestSpec).
-        when().
-            get("/customer/12323").
-        then().
-            assertThat().
-            body("firstName", equalTo("Susan")).
-            body("lastName", equalTo("Holmes"));
-    }
-
-    @Test
-    public void requestDataForCustomer14545_checkNames_expectAnnaGrant() {
-
-        given().
-            spec(requestSpec).
-        when().
-            get("/customer/14545").
-        then().
-            assertThat().
-            body("firstName", equalTo("Anna")).
-            body("lastName", equalTo("Grant"));
-    }
 }
+// TO DO : Redo this w/ TestNG's DataProvider
