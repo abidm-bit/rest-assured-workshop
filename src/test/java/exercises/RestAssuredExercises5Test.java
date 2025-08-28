@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import dataentities.Account;
+import dataentities.AccountResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -69,10 +70,12 @@ Account account = new Account("savings");
 
     @Test
     public void getAccountsForCustomer12212_deserializeIntoList_checkListSize_shouldEqual3() {
-
+        AccountResponse accountResponse=
         given().
             spec(requestSpec).
-        when();
+        when()
+                .get("/customer/12212/accounts").then().extract().body().as(AccountResponse.class);
+        assertEquals(3,accountResponse.getAccounts().size());
     }
 
     /*******************************************************
