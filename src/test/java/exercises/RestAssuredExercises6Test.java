@@ -6,6 +6,9 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
 import static org.hamcrest.Matchers.*;
 import java.util.HashMap;
 
@@ -54,7 +57,7 @@ public class RestAssuredExercises6Test {
                 }
                 """;
         HashMap<String,Object> graphQLQuery = new HashMap<>();
-        graphQLQuery.put("query1",queryString);
+        graphQLQuery.put("query",queryString);
 
         given().
             spec(requestSpec).
@@ -62,7 +65,10 @@ public class RestAssuredExercises6Test {
                 .body(graphQLQuery).
         when().
                 post("/graphql").
-        then().assertThat().body("data.fruit.fruit_name",equalTo("Apple"));
+        then()
+                .assertThat()
+                .body("data.fruit.fruit_name",equalTo("Apple"))
+                .body("data.fruit.tree_name",equalTo("Malus"));
     }
 
     /*******************************************************
@@ -93,8 +99,13 @@ public class RestAssuredExercises6Test {
      * expression to extract the required value from the response
      ******************************************************/
 
-    @Test
-    public void getFruitDataById_checkFruitNameAndTreeName() {
+    @ParameterizedTest
+    @CsvSource({
+            "1,Apple,Malus",
+            "2,Pear,Pyrus",
+            "3,Banana,Musa"
+    })
+    public void getFruitDataById_checkFruitNameAndTreeName(int fruitId, String expectedFruitName, String expectedTreeName) {
 
         String queryString = """
                 query GetFruit($id: ID!)
@@ -107,9 +118,24 @@ public class RestAssuredExercises6Test {
                 }
                 """;
 
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("id", fruitId);
+
+        HashMap<String, Object> graphqlQuery = new HashMap<>();
+        graphqlQuery.put("query", queryString);
+        graphqlQuery.put("variables", variables);
+
         given().
-            spec(requestSpec).
+            spec(requestSpec)
+                .body(graphqlQuery).
         when().
-        then();
+                post("/graphql").
+        then()
+                .assertThat()
+                .statusCode(ApiResponseStatus.OK.getCode())
+                .and()
+                .body("data.fruit.fruit_name",equalTo(expectedFruitName))
+                .and()
+                .body("data.fruit.tree_name",equalTo(expectedTreeName));
     }
 }
