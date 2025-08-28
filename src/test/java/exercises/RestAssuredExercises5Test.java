@@ -45,13 +45,16 @@ public class RestAssuredExercises5Test {
      * Verify that the response HTTP status code is equal to 201
      ******************************************************/
 
+    // Use a POJO to pass a test data object
     @Test
     public void postAccountObject_checkResponseHttpStatusCode_expect201() {
-
+Account account = new Account("savings");
         given().
             spec(requestSpec).
-        when().
-        then();
+        body(account)
+                .when().post("/customer/12212/accounts").
+        then().assertThat().statusCode(ApiResponseStatus.CREATED.getCode())
+                ;
     }
 
     /*******************************************************
