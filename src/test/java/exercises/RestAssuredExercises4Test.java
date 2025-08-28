@@ -87,11 +87,12 @@ public class RestAssuredExercises4Test {
 
     @Test
     public void getAccountsForCustomer12212AsXml_checkNumberOfCheckingAccounts_shouldBe3() {
-
         given().
-            spec(requestSpec).
-        when().
-        then();
+            spec(requestSpec).header("Accept","application/xml").
+        when().get("/xml/customer/12212/accounts").
+        then()
+                .assertThat().body("accounts.account.findAll{it.type=='checking'}",hasSize(3))
+        ;
     }
 
 
