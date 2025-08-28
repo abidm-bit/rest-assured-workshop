@@ -41,10 +41,9 @@ public class RestAssuredExercises4Test {
     // when comparing integer element values, pass the integer as a string
     @Test
     public void getAccountsForCustomer12212AsXml_checkIdOfFirstAccount_shouldBe12345() {
-
         given().
             spec(requestSpec).
-                header("Accept","application/xml")
+                header("Accept",ContentType.XML)
                 .when().get("/xml/customer/12212/accounts")
                 .then()
                 .assertThat()
@@ -68,7 +67,7 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkBalanceOfThirdAccount_shouldBe4321() {
 
         given().
-            spec(requestSpec).header("Accept","application/xml").
+            spec(requestSpec).header("Accept",ContentType.XML).
         when().get("/xml/customer/12212/accounts").
         then()
                 .assertThat()
@@ -89,7 +88,7 @@ public class RestAssuredExercises4Test {
     @Test
     public void getAccountsForCustomer12212AsXml_checkNumberOfCheckingAccounts_shouldBe3() {
         given().
-            spec(requestSpec).header("Accept","application/xml").
+            spec(requestSpec).header("Accept",ContentType.XML).
         when().get("/xml/customer/12212/accounts").
         then()
                 .assertThat().body("accounts.account.findAll{it.type=='checking'}",hasSize(3))
@@ -111,9 +110,8 @@ public class RestAssuredExercises4Test {
 
     @Test
     public void getAccountsForCustomer12212AsXml_checkNumberOfAccountIdsStartingWith5_shouldBe2() {
-
         given().
-            spec(requestSpec).header("Accept","application/xml").
+            spec(requestSpec).header("Accept",ContentType.XML).
         when().get("/xml/customer/12212/accounts").
                 then().assertThat().body("accounts.account.id.grep(~/5.*/)",hasSize(2));
     }
