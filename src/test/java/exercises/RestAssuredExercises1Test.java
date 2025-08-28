@@ -17,6 +17,7 @@ public class RestAssuredExercises1Test {
 
 	private RequestSpecification requestSpec;
     public String customerIdEndpoint = "/customer/{customerId}";
+    public String customerAccountsEndpoint = "/customer/{customerId}/accounts";
     public Integer reuseId;
 
 
@@ -148,7 +149,7 @@ public class RestAssuredExercises1Test {
         .spec(requestSpec)
         .pathParam("customerId",12212)
         .when()
-        .get(customerIdEndpoint+"/accounts")
+        .get(customerAccountsEndpoint)
         .then().assertThat().body("accounts.id",hasItem(12345));
 	}
 
@@ -165,7 +166,7 @@ public class RestAssuredExercises1Test {
 		given().
 			spec(requestSpec).pathParam("customerId",12212)
                 .when()
-                .get(customerIdEndpoint+"/accounts")
+                .get(customerAccountsEndpoint)
                 .then().assertThat().body("accounts.id",not(hasItem(99999)));
 	}
 
@@ -182,7 +183,7 @@ public class RestAssuredExercises1Test {
 		given().
 			spec(requestSpec).
                 pathParam("customerId",12212)
-		        .when().get(customerIdEndpoint+"/accounts")
+		        .when().get(customerAccountsEndpoint)
                 .then().assertThat().body("accounts.id",hasSize(3));
 	}
 }
