@@ -38,6 +38,7 @@ public class RestAssuredExercises4Test {
      ******************************************************/
 
     // Request Header, response should be in XML , assert a xml field
+    // when comparing integer element values, pass the integer as a string
     @Test
     public void getAccountsForCustomer12212AsXml_checkIdOfFirstAccount_shouldBe12345() {
 
@@ -48,7 +49,7 @@ public class RestAssuredExercises4Test {
                 .then()
                 .assertThat()
                 .contentType(ContentType.XML)
-                .body("accounts.account[0].id",equalTo(12345));
+                .body("accounts.account[0].id",equalTo("12345"));
     }
 
     /*******************************************************
