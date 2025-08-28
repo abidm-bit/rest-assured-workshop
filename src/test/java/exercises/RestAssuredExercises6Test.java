@@ -6,6 +6,8 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.hamcrest.Matchers.*;
+import java.util.HashMap;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.request;
@@ -28,7 +30,6 @@ public class RestAssuredExercises6Test {
     /*******************************************************
      * Create a new payload for a GraphQL query using a
      * HashMap and the specified query (with hardcoded ID)
-     *
      * POST this object to /graphql
      *
      * Assert that the name of the fruit is equal to "Apple"
@@ -52,11 +53,16 @@ public class RestAssuredExercises6Test {
                     }
                 }
                 """;
+        HashMap<String,Object> graphQLQuery = new HashMap<>();
+        graphQLQuery.put("query1",queryString);
 
         given().
             spec(requestSpec).
+        contentType(ContentType.JSON)
+                .body(graphQLQuery).
         when().
-        then();
+                post("/graphql").
+        then().assertThat().body("data.fruit.fruit_name",equalTo("Apple"));
     }
 
     /*******************************************************
