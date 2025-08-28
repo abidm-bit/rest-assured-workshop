@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.internal.http.Status;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +42,12 @@ public class RestAssuredExercises4Test {
 
         given().
             spec(requestSpec).
-        when().
-        then();
+                header("Accept","application/xml")
+                .when().get("/xml/customer/12212/accounts")
+                .then()
+                .assertThat()
+                .contentType(ContentType.XML)
+                .body("accounts.account[0].id",equalTo(12345));
     }
 
     /*******************************************************
