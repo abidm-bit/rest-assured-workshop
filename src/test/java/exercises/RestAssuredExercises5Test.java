@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import dataentities.Account;
 import dataentities.AccountResponse;
+import dataentities.Customer;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -40,9 +41,7 @@ public class RestAssuredExercises5Test {
     /*******************************************************
      * Create a new Account object with 'savings' as the account
      * type
-     *
      * POST this object to /customer/12212/accounts
-     *
      * Verify that the response HTTP status code is equal to 201
      ******************************************************/
 
@@ -62,7 +61,6 @@ Account account = new Account("savings");
      * Perform an HTTP GET to /customer/12212/accounts and
      * deserialize the response into an object of type
      * AccountResponse
-     *
      * Using a JUnit assertEquals() method, verify that the
      * number of account in the response (in other words,
      * the size() of the accounts property) is equal to 3
@@ -81,11 +79,8 @@ Account account = new Account("savings");
     /*******************************************************
      * Create a new Customer object by using the constructor
      * that takes a first name and last name as its parameters
-     *
      * Use a first name and a last name of your own choosing
-     *
      * POST this object to /customer
-     *
      * Deserialize the response into another object of type
      * Customer and use JUnit assertEquals() assertions to
      * check that the first name and last name returned by
@@ -95,9 +90,14 @@ Account account = new Account("savings");
 
     @Test
     public void postCustomerObject_checkReturnedFirstAndLastName_expectSuppliedValues() {
-
+        String fN = "Pakalu"; String lN = "Papito";
+        Customer customerInput = new Customer(fN,lN);
+        Customer recorded =
         given().
             spec(requestSpec).
-        when();
+                body(customerInput).
+        when().post("/customer").then().extract().body().as(Customer.class);
+        assertEquals(fN,recorded.getFirstName());
+        assertEquals(lN,recorded.getLastName());
     }
 }
