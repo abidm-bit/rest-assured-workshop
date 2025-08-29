@@ -1,4 +1,4 @@
-package exercises;
+package exercisesJUnit;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.builder.RequestSpecBuilder;

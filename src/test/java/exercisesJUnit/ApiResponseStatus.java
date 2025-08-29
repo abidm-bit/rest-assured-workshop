@@ -1,4 +1,4 @@
-package exercises;
+package exercisesJUnit;
 
 public enum ApiResponseStatus {
     // 1xx Informational

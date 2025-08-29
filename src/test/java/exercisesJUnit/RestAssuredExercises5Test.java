@@ -1,8 +1,6 @@
-package exercises;
+package exercisesJUnit;
 
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import dataentities.Account;
 import dataentities.AccountResponse;
 import dataentities.Customer;

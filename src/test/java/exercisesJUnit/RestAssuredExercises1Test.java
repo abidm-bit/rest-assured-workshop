@@ -1,16 +1,13 @@
-package exercises;
+package exercisesJUnit;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
 import io.restassured.specification.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 @WireMockTest(httpPort = 9876)
 public class RestAssuredExercises1Test {

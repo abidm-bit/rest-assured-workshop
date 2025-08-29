@@ -1,4 +1,4 @@
-package exercises;
+package exercisesJUnit;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.builder.RequestSpecBuilder;
@@ -6,7 +6,6 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.authentication;
 import static io.restassured.RestAssured.given;
 
 @WireMockTest(httpPort = 9876)
