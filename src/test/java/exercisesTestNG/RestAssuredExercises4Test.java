@@ -1,29 +1,35 @@
 package exercisesTestNG;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import io.restassured.builder.RequestSpecBuilder;
+
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises4Test {
+public class RestAssuredExercises4Test extends Base{
 
-    private RequestSpecification requestSpec;
 
-    @BeforeEach
-    public void createRequestSpecification() {
-
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("http://localhost").
-                setPort(9876).
-                build();
+    @BeforeClass
+    public void setup() {
+        setupServer();
     }
+
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
+
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
+    }
+
 
     /*******************************************************
      * Perform a GET request to /xml/customer/12212/accounts
