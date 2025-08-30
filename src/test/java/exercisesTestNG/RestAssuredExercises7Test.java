@@ -1,33 +1,33 @@
 package exercisesTestNG;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import dataentities.Photo;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises7Test {
+public class RestAssuredExercises7Test extends Base {
 
-    private RequestSpecification requestSpec;
 
-    @BeforeEach
-    public void createRequestSpecification() {
+    @BeforeClass
+    public void setup() {
+        setupServer();
+    }
 
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("http://localhost").
-                setPort(9876).
-                setContentType(ContentType.JSON).
-                build();
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
+
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
     }
 
     @Test
@@ -57,7 +57,7 @@ int reuseUserId=
          * Use a JUnit assertEquals to verify that the userId
          * is equal to 4
          ******************************************************/
-            assertEquals(4,reuseUserId);
+            Assert.assertEquals(reuseUserId,4);
 
         /*******************************************************
          * Perform a GET to /albums and extract all albums that
@@ -85,7 +85,7 @@ ArrayList<Integer> albumList=
          * exactly 10 items (hint: use the size() method)
          ******************************************************/
 
-assertEquals(10,albumList.size());
+Assert.assertEquals(albumList.size(),10);
 
         /*******************************************************
          * Perform a GET to /albums/XYZ/photos, where XYZ is the
@@ -113,7 +113,7 @@ assertEquals(10,albumList.size());
          * Hint: use the get() method to retrieve an object with a
          * specific index from a List
          ******************************************************/
-    assertEquals("pariatur sunt eveniet",photoList.get(31).getTitle());
+        Assert.assertEquals(photoList.get(31).getTitle(),"pariatur sunt eveniet");
 
     }
 }
