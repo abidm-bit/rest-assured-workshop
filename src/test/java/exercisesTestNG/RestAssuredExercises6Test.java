@@ -1,32 +1,33 @@
 package exercisesTestNG;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import org.testng.annotations.*;
 
 import java.util.HashMap;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises6Test {
+public class RestAssuredExercises6Test extends Base {
 
-    private RequestSpecification requestSpec;
+    @BeforeClass
+    public void setup() {
+        setupServer();
+    }
 
-    @BeforeEach
-    public void createRequestSpecification() {
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
 
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("http://localhost").
-                setPort(9876).
-                setContentType(ContentType.JSON).
-                build();
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
     }
 
     /*******************************************************
@@ -98,12 +99,17 @@ public class RestAssuredExercises6Test {
      * expression to extract the required value from the response
      ******************************************************/
 
-    @ParameterizedTest
-    @CsvSource({
-            "1,Apple,Malus",
-            "2,Pear,Pyrus",
-            "3,Banana,Musa"
-    })
+
+    @DataProvider(name = "fruitInfo")
+    public Object[][] fruitSource() {
+        return new Object[][]{
+                {1, "Apple", "Malus"},
+                {2, "Pear", "Pyrus"},
+                {3, "Banana", "Musa"}
+        };
+    }
+
+    @Test(dataProvider = "fruitInfo")
     public void getFruitDataById_checkFruitNameAndTreeName(int fruitId, String expectedFruitName, String expectedTreeName) {
 
         String queryString = """
