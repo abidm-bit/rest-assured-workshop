@@ -1,0 +1,118 @@
+package exercisesTestNG;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+
+@WireMockTest(httpPort = 9876)
+public class RestAssuredExercises4Test {
+
+    private RequestSpecification requestSpec;
+
+    @BeforeEach
+    public void createRequestSpecification() {
+
+        requestSpec = new RequestSpecBuilder().
+                setBaseUri("http://localhost").
+                setPort(9876).
+                build();
+    }
+
+    /*******************************************************
+     * Perform a GET request to /xml/customer/12212/accounts
+     * to get the list of accounts associated with customer
+     * 12212 in XML format
+     *
+     * Assert that the ID of the first account equals 12345
+     * What do you notice about comparing integer element values?
+     *
+     * Use "accounts.account[0].id" as the XmlPath
+     * expression to extract the required value from the response
+     ******************************************************/
+
+    // Request Header, response should be in XML , assert a xml field
+    // when comparing integer element values, pass the integer as a string
+    @Test
+    public void getAccountsForCustomer12212AsXml_checkIdOfFirstAccount_shouldBe12345() {
+        given().
+            spec(requestSpec).
+                header("Accept",ContentType.XML)
+                .when().get("/xml/customer/12212/accounts")
+                .then()
+                .assertThat()
+                .contentType(ContentType.XML)
+                .body("accounts.account[0].id",equalTo("12345"));
+    }
+
+    /*******************************************************
+     * Perform a GET request to /xml/customer/12212/accounts
+     * to get the list of accounts associated with customer
+     * 12212 in XML format
+     *
+     * Assert that the balance for the third account in the
+     * list is equal to 43.21
+     *
+     * Can you create the correct XmlPath expression yourself,
+     * using the examples as shown in the slides?
+     ******************************************************/
+
+    @Test
+    public void getAccountsForCustomer12212AsXml_checkBalanceOfThirdAccount_shouldBe4321() {
+
+        given().
+            spec(requestSpec).header("Accept",ContentType.XML).
+        when().get("/xml/customer/12212/accounts").
+        then()
+                .assertThat()
+                .contentType(ContentType.XML).body("accounts.account[2].balance",equalTo("43.21"));
+    }
+
+    /*******************************************************
+     * Perform a GET request to /xml/customer/12212/accounts
+     * to get the list of accounts associated with customer
+     * 12212 in XML format
+     *
+     * Assert that the list contains 3 accounts of type 'checking'
+     *
+     * Can you create the correct XmlPath expression yourself,
+     * using the examples as shown in the slides?
+     ******************************************************/
+
+    @Test
+    public void getAccountsForCustomer12212AsXml_checkNumberOfCheckingAccounts_shouldBe3() {
+        given().
+            spec(requestSpec).header("Accept",ContentType.XML).
+        when().get("/xml/customer/12212/accounts").
+        then()
+                .assertThat().body("accounts.account.findAll{it.type=='checking'}",hasSize(3))
+        ;
+    }
+
+
+    /*******************************************************
+     * Perform a GET request to /xml/customer/12212/accounts
+     * to get the list of accounts associated with customer
+     * 12212 in XML format
+     *
+     * Assert that the list contains 2 accounts that have an
+     * id starting with a '5'
+     *
+     * Can you create the correct XmlPath expression yourself,
+     * using the examples as shown in the slides?
+     ******************************************************/
+
+    @Test
+    public void getAccountsForCustomer12212AsXml_checkNumberOfAccountIdsStartingWith5_shouldBe2() {
+        given().
+            spec(requestSpec).header("Accept",ContentType.XML).
+        when().get("/xml/customer/12212/accounts").
+                then().assertThat().body("accounts.account.id.grep(~/5.*/)",hasSize(2));
+    }
+}

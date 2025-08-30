@@ -1,0 +1,186 @@
+package exercisesTestNG;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
+@WireMockTest(httpPort = 9876)
+public class RestAssuredExercises1Test {
+
+	private RequestSpecification requestSpec;
+    public String customerIdEndpoint = "/customer/{customerId}";
+    public String customerAccountsEndpoint = "/customer/{customerId}/accounts";
+    public Integer reuseId;
+
+
+	@BeforeEach
+	public void createRequestSpecification() {
+
+		requestSpec = new RequestSpecBuilder().
+				setBaseUri("http://localhost").
+				setPort(9876).
+				build();
+	}
+
+	/*******************************************************
+	 * Send a GET request to /customer/12212
+	 * and check that the response has HTTP status code 200
+	 ******************************************************/
+    // extracting the id, to reuse it, but this sends 2 requests
+	@Test
+	public void requestDataForCustomer12212_checkResponseCode_expect200() {
+        reuseId =
+        given()
+                .spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+                .extract()
+                .path("id");
+		given()
+                .spec(requestSpec)
+                .pathParam("customerId",reuseId)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+                .log().all()
+                .and()
+                .assertThat()
+                .statusCode(ApiResponseStatus.OK.getCode());
+	}
+
+	/*******************************************************
+	 * Send a GET request to /customer/99999
+	 * and check that the answer has HTTP status code 404
+	 ******************************************************/
+
+
+	@Test
+	public void requestDataForCustomer99999_checkResponseCode_expect404() {
+		given()
+                .spec(requestSpec)
+                .pathParam("customerId",99999)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+                .log().all()
+                .and()
+                .assertThat()
+                .statusCode(ApiResponseStatus.NOT_FOUND.getCode());
+	}
+
+	/*******************************************************
+	 * Send a GET request to /customer/12212
+	 * and check that the Content-Type header of the response
+	 * has value 'application/json'
+	 ******************************************************/
+
+    // realizing that I have to use the dataentities POJO class and the json test data from resources/mappings
+	@Test
+	public void requestDataForCustomer12212_checkContentType_expectApplicationJson() {
+		given().
+			spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+                .assertThat()
+                .contentType("application/json");
+	}
+
+	/***********************************************
+	 * Send a GET request to /customer/12212 and check
+	 * that the first name of the person associated with
+	 * this customer ID is 'John'.
+	 * Use the GPath expression "firstName" to
+	 * extract the required response body element
+	 **********************************************/
+
+	@Test
+	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
+        given().
+                spec(requestSpec)
+                .pathParam("customerId",12212)
+                .when()
+                .get(customerIdEndpoint)
+                .then()
+            .assertThat()
+                .body("firstName",equalTo("John"));
+	}
+
+	/***********************************************
+	 * Send a GET request to /customer/12212 and check
+	 * that the city where the person associated with
+	 * this customer ID is living is 'Beverly Hills'.
+	 * Use the GPath expression "address.city" to
+	 * extract the required response body element
+	 **********************************************/
+// assert a nested property within a JSON
+	@Test
+	public void requestDataForCustomer12212_checkAddressCity_expectBeverlyHills() {
+		given()
+       .spec(requestSpec)
+       .pathParam("customerId",12212)
+       .when()
+       .get(customerIdEndpoint)
+       .then().assertThat().body("address.city",equalTo("Beverly Hills"));
+	}
+
+	/***********************************************
+	 * Send a GET request to /customer/12212/accounts
+	 * and check that the list of accounts returned
+	 * includes an account with ID 12345
+	 * Use the GPath expression "accounts.id" to
+	 * extract the required response body elements
+	 **********************************************/
+// asserting if an array contains an element
+	@Test
+	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectContains12345() {
+		given()
+        .spec(requestSpec)
+        .pathParam("customerId",12212)
+        .when()
+        .get(customerAccountsEndpoint)
+        .then().assertThat().body("accounts.id",hasItem(12345));
+	}
+
+	/***********************************************
+	 * Send a GET request to /customer/12212/accounts
+	 * and check that the list of accounts returned
+	 * does not include an account with ID 99999
+	 * Use the GPath expression "accounts.id" to
+	 * extract the required response body elements
+	 **********************************************/
+
+	@Test
+	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectDoesNotContain99999() {
+		given().
+			spec(requestSpec).pathParam("customerId",12212)
+                .when()
+                .get(customerAccountsEndpoint)
+                .then().assertThat().body("accounts.id",not(hasItem(99999)));
+	}
+
+	/***********************************************
+	 * Send a GET request to /customer/12212/accounts
+	 * and check that the list of account IDs returned
+	 * is a collection of size 3
+	 * Use the GPath expression "accounts.id" to
+	 * extract the required response body elements
+	 **********************************************/
+
+	@Test
+	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectSize3() {
+		given().
+			spec(requestSpec).
+                pathParam("customerId",12212)
+		        .when().get(customerAccountsEndpoint)
+                .then().assertThat().body("accounts.id",hasSize(3));
+	}
+}

@@ -1,4 +1,4 @@
-package reportUtilities;
+package exercisesTestNG;
 
 
 import com.aventstack.extentreports.ExtentReports;
