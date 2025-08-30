@@ -48,8 +48,9 @@
         </Logger>
 
         <!-- Root project logs -->
-        <Root level="INFO">   <!-- only INFO+ in console -->
+        <Root level="ERROR">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLogger"/>
         </Root>
 
     </Loggers>

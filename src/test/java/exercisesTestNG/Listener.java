@@ -8,6 +8,8 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import static com.google.common.base.Strings.repeat;
+
 public class Listener implements ITestListener {
 
     private static final ExtentReports extent = ExtentManager.createInstance("report.html");
@@ -15,7 +17,9 @@ public class Listener implements ITestListener {
     private static final Logger LOGGER = LogManager.getLogger (Listener.class);
 
     private void logMessage(final String message){
+        LOGGER.info (repeat ("=", 75));
         LOGGER.info(message);
+        LOGGER.info (repeat ("=", 75));
     }
 
     private ExtentTest getTest(ITestResult result) {
