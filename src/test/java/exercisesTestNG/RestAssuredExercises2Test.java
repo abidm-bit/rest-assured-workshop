@@ -6,23 +6,28 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.testng.annotations.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises2Test {
+public class RestAssuredExercises2Test extends Base {
 
-    private RequestSpecification requestSpec;
     public String customerIdEndpoint = "/customer/{customerId}";
 
-    @BeforeEach
-    public void createRequestSpecification() {
+    @BeforeClass
+    public void setup() {
+        setupServer();
+    }
 
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("http://localhost").
-                setPort(9876).
-                build();
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
+
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
     }
 
     /*******************************************************
@@ -47,15 +52,19 @@ public class RestAssuredExercises2Test {
      * respectively, to extract the required response body elements
      ******************************************************/
 
-    @ParameterizedTest
-    @CsvSource({
-            "12212, John, Smith",
-            "12323, Susan, Holmes",
-            "14545, Anna, Grant"
-    })
+
+    @DataProvider(name = "customerInfo")
+    public Object[][] custy() {
+        return new Object[][]{
+                {12212, "John", "Smith"},
+                {12323, "Susan", "Holmes"},
+                {14545, "Anna", "Grant"}
+        };
+    }
+    @Test(dataProvider = "customerInfo")
     public void requestData_checkNames(int customerId, String firstName, String lastName) {
         given().
-            spec(requestSpec).pathParam("customerId",customerId).
+            spec(Base.requestSpec).pathParam("customerId",customerId).
         when().
             get(customerIdEndpoint).
         then().
@@ -65,4 +74,3 @@ public class RestAssuredExercises2Test {
     }
 
 }
-// TO DO : Redo this w/ TestNG's DataProvider
