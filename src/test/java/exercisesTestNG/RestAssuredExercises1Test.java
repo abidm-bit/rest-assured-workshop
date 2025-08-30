@@ -1,31 +1,39 @@
 package exercisesTestNG;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.*;
 
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises1Test {
+public class RestAssuredExercises1Test extends Base{
 
-	private RequestSpecification requestSpec;
+
     public String customerIdEndpoint = "/customer/{customerId}";
     public String customerAccountsEndpoint = "/customer/{customerId}/accounts";
     public Integer reuseId;
 
 
-	@BeforeEach
-	public void createRequestSpecification() {
+    @BeforeClass
+    public void setup() {
+       setupServer();
+    }
 
-		requestSpec = new RequestSpecBuilder().
-				setBaseUri("http://localhost").
-				setPort(9876).
-				build();
-	}
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
+
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
+    }
 
 	/*******************************************************
 	 * Send a GET request to /customer/12212
