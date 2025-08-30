@@ -1,25 +1,29 @@
 package exercisesTestNG;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
 
-@WireMockTest(httpPort = 9876)
-public class RestAssuredExercises3Test {
+public class RestAssuredExercises3Test extends Base {
 
-    private RequestSpecification requestSpec;
+    String reuseToken;
 
-    @BeforeEach
-    public void createRequestSpecification() {
+    @BeforeClass
+    public void setup() {
+        setupServer();
+    }
 
-        requestSpec = new RequestSpecBuilder().
-                setBaseUri("http://localhost").
-                setPort(9876).
-                build();
+    @AfterClass
+    public void teardown() {
+        stopServer();
+    }
+
+    @BeforeMethod
+    public void buildRequest() {
+        createRequestSpecification();
     }
 
     /*******************************************************
@@ -38,16 +42,16 @@ public class RestAssuredExercises3Test {
 
     @Test
     public void getTokenUsingBasicAuth_extractFromResponse_thenReuseAsOAuthToken() {
-    String reuseToken =
+    reuseToken =
         given().
-            spec(requestSpec).
+            spec(Base.requestSpec).
                 auth().preemptive().basic("john","demo").
         when().
         get("/token").
         then().extract().path("token")
             ;
         given().
-            spec(requestSpec).
+            spec(Base.requestSpec).
                 auth().oauth2(reuseToken).
         when().
                 get("/secure/customer/12212").
