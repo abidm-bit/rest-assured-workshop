@@ -10,9 +10,10 @@ public class Base {
     static WireMockServer wireMockServer;
     static RequestSpecification requestSpec;
 
-
     public void setupServer() {
-        wireMockServer = new WireMockServer(wireMockConfig().port(9876));
+        wireMockServer = new WireMockServer(wireMockConfig()
+            .port(9876)
+            .globalTemplating(true));
         wireMockServer.start();
     }
 
