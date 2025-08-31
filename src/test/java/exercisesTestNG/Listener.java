@@ -28,10 +28,16 @@ public class Listener implements ITestListener {
 
     @Override
     public synchronized void onTestStart(ITestResult result) {
+        String suiteName = result.getTestContext().getSuite().getName();
+        String testName = result.getTestContext().getName();
+        String className = result.getMethod().getRealClass().getSimpleName();
         String methodName = result.getMethod().getMethodName();
-        ExtentTest test = extent.createTest(methodName);
+        String testReportName = String.format("%s - %s.%s", testName, className, methodName);
+//        ExtentTest test = extent.createTest(methodName);
+        ExtentTest test = extent.createTest(testReportName);
         methodTest.set(test);
-        logMessage ("Test Execution Started for :" + result.getName ());
+//        logMessage ("Test Execution Started for :" + result.getName ());
+        logMessage ("Test Execution Started for: " + testReportName);
     }
 
     @Override
